@@ -87,10 +87,11 @@
   gather_facts: True
   vars:
     - master: "{{ groups['private_ips'] | join(',') }}"
+    - master_node: False
   roles:
     - common
     - python
-    - locust_slave
+    - locust
 
 # locust.io master
 - hosts: masters
@@ -99,9 +100,9 @@
   gather_facts: True
   vars:
     - master: "{{ groups['private_ips'] | join(',') }}"
-    - test_host: "https://google.com"
+    - master_node: True
   roles:
     - common
     - python
-    - locust_master
+    - locust
 

@@ -7,14 +7,26 @@
 - name: "Copy test agent to /opt/app"
   copy: src=agent.py dest=/opt/app/
 
+- name: "Set locustslave entry on supervisord"
+  template: src=locustslave.conf.j2 dest=/etc/supervisor/conf.d/locustslave.conf
+  when: master_node == False
+
+- name: "Start application"
+  supervisorctl: name=locustslave state=started
+  when: master_node == False
+
 - name: "Set locustmaster entry on supervisord"
   template: src=locustmaster.conf.j2 dest=/etc/supervisor/conf.d/locustmaster.conf
+  when: master_node == True
+
+- name: "Start application"
+  supervisorctl: name=locustmaster state=started
+  when: master_node == True
 
 - name: "Restart supervisord"
   service: name=supervisor state=restarted
 
-- name: "Start application"
-  supervisorctl: name=locustmaster state=started
-
 - name: "Print master address"
   debug: msg="{{ master }}"
+  when: master_node == True
+

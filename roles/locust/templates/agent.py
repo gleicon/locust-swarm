@@ -1,4 +1,8 @@
 from locust import HttpLocust, TaskSet, task
+# as per https://urllib3.readthedocs.org/en/latest/security.html#pyopenssl
+
+import urllib3.contrib.pyopenssl
+urllib3.contrib.pyopenssl.inject_into_urllib3()
 
 class WebsiteTasks(TaskSet):
     @task

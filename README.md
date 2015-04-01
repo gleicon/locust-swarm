@@ -6,7 +6,7 @@ Ansible AWS Provisioning for Locust.io Distributed load testing. There will be o
 	- Depends on Ansible and boto
 		$ sudo pip install ansible
 		$ sudo pip install boto
-
+	- Ships with ec2.py and ec2.ini from ansible. you probably want to check [this doc and update](http://docs.ansible.com/intro_dynamic_inventory.html)
 	- Export credentials
 		$ export AWS_ACCESS_KEY_ID=<aws access key id>
 		$ export AWS_SECRET_ACCESS_KEY=<aws secret access key>
@@ -38,7 +38,7 @@ Ansible AWS Provisioning for Locust.io Distributed load testing. There will be o
 
 ## Testing agent
 
-The testing agent is agent.py, copied into templates/ dir of both locust_master and locust_slave roles.
+The testing agent is agent.py, copied into templates/ dir of locust role. If you use *run.sh* it will do it for you
 
 ## Target host
 

@@ -12,5 +12,9 @@
   pip: name=virtualenv
 
 - name: "Install pyzmq"
-  pip: name=pyzmq
-
+  pip: name={{ item }}
+  with_items:
+    - pyzmq
+    - pyopenssl
+    - ndg-httpsclient
+    - pyasn1
