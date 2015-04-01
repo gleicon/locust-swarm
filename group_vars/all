@@ -6,3 +6,4 @@ vpc_id: vpc-56e3b633
 subnet_id: subnet-d94a2bae 
 slave_count: 3
 cidr_ip: 10.0.0.0/16
+test_host: "https://google.com"

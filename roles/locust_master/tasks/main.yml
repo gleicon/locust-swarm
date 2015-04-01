@@ -16,3 +16,5 @@
 - name: "Start application"
   supervisorctl: name=locustmaster state=started
 
+- name: "Print master address"
+  debug: msg="{{ master }}"

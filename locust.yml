@@ -87,7 +87,6 @@
   gather_facts: True
   vars:
     - master: "{{ groups['private_ips'] | join(',') }}"
-    - test_host: "https://google.com"
   roles:
     - common
     - python
@@ -105,5 +104,4 @@
     - common
     - python
     - locust_master
-
 

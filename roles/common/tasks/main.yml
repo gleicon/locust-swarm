@@ -1,7 +1,7 @@
-- name: update apt package cache
+- name: "Update apt package cache"
   apt: update_cache=yes
 
-- name: install common packages debian/ubuntu
+- name: "Install common packages debian/ubuntu"
   apt: pkg={{ item }} state=latest
   with_items:
     - build-essential
