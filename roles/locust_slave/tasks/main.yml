@@ -1,0 +1,18 @@
+- name: "Install locust"
+  pip: name=locustio
+
+- name: "Create /opt/app"
+  file: dest=/opt/app mode=755 state=directory
+
+- name: "Copy test agent to /opt/app"
+  copy: src=agent.py dest=/opt/app/
+
+- name: "Set locustslave entry on supervisord"
+  template: src=locustslave.conf.j2 dest=/etc/supervisor/conf.d/locustslave.conf
+
+- name: "Restart supervisord"
+  service: name=supervisor state=restarted
+
+- name: "Start application"
+  supervisorctl: name=locustslave state=started
+

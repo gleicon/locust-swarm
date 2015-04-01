@@ -1,0 +1,8 @@
+ssh_key_name: aws_devel
+aws_region: us-east-1
+ami_id: ami-9eaa1cf6
+instance_type: t2.micro
+vpc_id: vpc-56e3b633
+subnet_id: subnet-d94a2bae 
+slave_count: 3
+cidr_ip: 10.0.0.0/16

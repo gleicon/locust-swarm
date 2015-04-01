@@ -1,0 +1,5 @@
+[program:locustslave]
+command=/usr/local/bin/locust -f /opt/app/agent.py --slave --master-host={{ master }} --host={{ test_host }}
+redirect_stderr=true
+stdout_logfile=/var/log/locust_slave.log
+stdout_logfile_maxbytes=100MB

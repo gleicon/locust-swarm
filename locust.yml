@@ -1,0 +1,109 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+  - name: "Create security group"
+    ec2_group: 
+      name: locust_group
+      description: "Locust Security group"
+      vpc_id: "{{vpc_id}}"
+      region: "{{aws_region}}"
+      rules:
+        - proto: tcp
+          type: ssh
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+
+        - proto: tcp
+          type: http
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        
+        - proto: tcp
+          type: http
+          from_port: 8089
+          to_port: 8089
+          cidr_ip: 0.0.0.0/0
+
+        - proto: tcp
+          type: Custom TCP Rule
+          from_port: 1024
+          to_port: 65535
+          cidr_ip: "{{ cidr_ip }}"
+        
+      rules_egress:
+        - proto: all
+          type: all
+          cidr_ip: 0.0.0.0/0
+
+    register: ec2_firewall
+
+  - name: "Create Locust Master"
+    local_action: ec2 key_name="{{ssh_key_name}}"
+      count=1
+      vpc_subnet_id="{{subnet_id}}"
+      region="{{aws_region}}"
+      group_id="{{ec2_firewall.group_id}}"
+      instance_type="{{instance_type}}"
+      image="{{ami_id}}"
+      wait=yes
+      assign_public_ip=yes
+    register: locust_master
+
+  - name: "Create Locust Slaves"
+    local_action: ec2 key_name="{{ssh_key_name}}"
+      count="{{ slave_count }}" 
+      vpc_subnet_id="{{subnet_id}}"
+      region="{{aws_region}}"
+      group_id="{{ec2_firewall.group_id}}"
+      instance_type="{{instance_type}}"
+      image="{{ami_id}}"
+      wait=yes
+      assign_public_ip=yes
+    register: locust_slaves
+
+  - name: "Add host to slaves" 
+    add_host: hostname={{ item.public_ip }} groupname=slaves
+    with_items: locust_slaves.instances
+
+  - name: "Add host to masters" 
+    add_host: hostname={{ item.public_ip }} groupname=masters
+    with_items: locust_master.instances
+
+  - name: "Add master invalid IP addr"
+    add_host: hostname={{ item.private_ip}} groupname=private_ips
+    with_items: locust_master.instances
+
+  - name: "Wait for confirmation at port 22"
+    wait_for: port=22 host="{{ item.public_ip }}" search_regex=OpenSSH delay=10 
+    with_items: locust_slaves.instances
+
+# locust.io slaves
+- hosts: slaves
+  sudo: True
+  user: ubuntu
+  gather_facts: True
+  vars:
+    - master: "{{ groups['private_ips'] | join(',') }}"
+    - test_host: "https://google.com"
+  roles:
+    - common
+    - python
+    - locust_slave
+
+# locust.io master
+- hosts: masters
+  sudo: True
+  user: ubuntu
+  gather_facts: True
+  vars:
+    - master: "{{ groups['private_ips'] | join(',') }}"
+    - test_host: "https://google.com"
+  roles:
+    - common
+    - python
+    - locust_master
+
+

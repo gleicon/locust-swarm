@@ -1,0 +1,22 @@
+- hosts: security_group_locust_group
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: Remove a instância 
+      local_action:
+        module: ec2
+        state: 'absent'
+        region: '{{aws_region}}'
+        instance_ids: '{{ec2_id}}'
+
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: Remove o security group locust_group
+      local_action:
+        description: "locust group"
+        module: ec2_group
+        name: security_group_locust_group
+        region: "{{aws_region}}"
+        state: 'absent'
