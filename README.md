@@ -39,4 +39,4 @@ The target host is configured at locust.yml variable test_host
 
 ## Master 
 
-Access the master VM using http://ip:8090
+Access the master VM using http://ip:8089
